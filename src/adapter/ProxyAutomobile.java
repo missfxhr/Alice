@@ -19,6 +19,6 @@ public abstract class ProxyAutomobile {
 	}
 
 	public void updateOptionPrice(String modelName, String optionSetName, String optionName, float newPrice) {
-		
+		am.updateOptionPrice(optionSetName, optionName, newPrice);
 	}
 }

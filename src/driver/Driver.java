@@ -21,7 +21,7 @@ public class Driver {
 		ca.printAuto(modelName);
 		UpdateAuto ua = new BuildAuto();
 		ua.updateOptionSetName(modelName, "OptionSet_2", "OptionSet_two");
-		ua.updateOptionPrice(modelName, "OptionSet_two", "color", 500);
+		ua.updateOptionPrice(modelName, "OptionSet_two", "Color", 500);
 		ca.printAuto(modelName);
 	}
 }
