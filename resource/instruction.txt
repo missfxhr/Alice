@@ -1,0 +1,28 @@
+===Color===
+0: Fort Knox Gold Clearcoat Metallic
+1: Liquid Grey Clearcoat Metallic
+2: Infra-Red Clearcoat
+3: Grabber Green Clearcoat Metallic
+4: Sangria Red Clearcoat Metallic
+5: French Blue Clearcoat Metallic
+6: Twilight Blue Clearcoat Metallic
+7: CD Silver Clearcoat Metallic
+8: Pitch Black Clearcoat
+9: Cloud 9 White Clearcoat
+
+===Transmission===
+0: automatic
+1: manual
+
+===Brakes/Traction Control===
+0: Standard
+1: ABS
+2: ABS with Advance Tra
+
+===Side Impact Air Bags===
+0: present
+1: not present
+
+===Power Moonroof===
+0: present
+1: not present
