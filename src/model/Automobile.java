@@ -2,17 +2,26 @@ package model;
 
 import java.io.Serializable;
 
+import model.OptionSet.Option;
+
 public class Automobile implements Serializable { //This class will represent the Model.
 	private static final long serialVersionUID = -1459660698127308486L;
-	public static int MAX_SET_NUM = 168;
 
 	private String name;
 	private float basePrice;
-    private OptionSet opset[];
-    private int optionSetNum;
-    private String[][] optionDetails;
+    private int optionNum;
+    private OptionSet optionSets[];
 
     public Automobile() {}
+
+    public Automobile(String name, float basePrice, int optionNum, int optionSetNum) {
+    	this.name = name;
+    	this.basePrice = basePrice;
+    	this.optionNum = optionNum;
+    	this.optionSets = new OptionSet[optionSetNum];
+    }
+
+    // setter
 
     public void setName(String name) {
         this.name = name;
@@ -22,62 +31,107 @@ public class Automobile implements Serializable { //This class will represent th
         this.basePrice = basePrice;
     }
 
-	public void setOpset(OptionSet[] opset) {
-		this.opset = opset;
+    public void setOptionNum(int optionNum) {
+    	this.optionNum = optionNum;
+    }
+    
+	public void setOptionSets(OptionSet[] optionSets) {
+		this.optionSets = optionSets;
 	}
 
-    public void setOptionDetails(String[][] optionDetails) {
-        this.optionDetails = optionDetails;
-    }
-
-    public void setOptionSet(int index, String[] optionArray) {
-        opset[index] = new OptionSet(optionArray[0], optionNames.length);
-        optionSetNum ++;
-    }
-
-    public void setOptions(int index, String[] optionArray) {
-        opset[index].setOptions(optionNames, optionArray);
-    }
+	// getter
 
     public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public float getBaseprice() {
-		return baseprice;
+	public float getBasePrice() {
+		return this.basePrice;
 	}
 
-	public String[] getOptionNames() {
-		return optionNames;
+	public int getOptionNum() {
+		return this.optionNum;
 	}
 
-    public OptionSet[] getOpset() {
-		return opset;
+    public OptionSet[] getOptionSets() {
+		return this.optionSets;
 	}
-	
-    public int getOptionSetNum() {
-		return optionSetNum;
-	}
+
+    // Create
+
+    public void createOptionSet(int index, String name) {
+    	this.optionSets[index] = new OptionSet(name, this.getOptionNum());
+    }
+
+    public void createOption(int optionSetIndex, int optionIndex, String name, String value, float price) {
+    	OptionSet optionSet = this.getOptionSet(optionSetIndex);
+    	optionSet.createOption(optionIndex, name, value, price);
+    }
+
+    // Read
+    
+    public OptionSet getOptionSet(int index) {
+    	return this.optionSets[index];
+    }
+
+    public OptionSet getOptionSet(String name) {
+    	for (int i = 0; i < this.getOptionSets().length; i ++) {
+    		if (this.getOptionSets()[i].getName().contentEquals(name))
+    			return this.getOptionSets()[i];
+    	}
+    	return null;
+    }
+    
+    public Option getOption(int optionSetIndex, int optionIndex) {
+    	return this.getOptionSet(optionSetIndex).getOption(optionIndex);
+    }
+
+    public Option getOption(String optionSetName, String optionName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	if (optionSet == null)
+    		return null;
+
+    	return optionSet.getOption(optionName);
+    }
+
+
+    // update
+
+    public void updateOptionSetName(String optionSetName, String newName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	if (optionSet == null)
+    		return;
+
+    	optionSet.setName(newName);
+    }
+
+    public void updateOptionPrice(String optionSetName, String optionName, float newPrice) {
+    	Option option = this.getOption(optionSetName, optionName);
+    	if (option == null)
+    		return;
+
+    	option.setPrice(newPrice);
+    }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Model Name: ");
-        sb.append(this.name);
+        sb.append(this.getName());
         sb.append("\r\n");
         sb.append("Base Price: ");
-        sb.append(this.baseprice);
+        sb.append(this.getBasePrice());
         sb.append("\r\n");
         sb.append("Number of Option Sets: ");
-        sb.append(this.optionSetNum);
+        sb.append(this.getOptionSets().length);
         sb.append("\r\n");
         sb.append("\r\n");
         sb.append("=== Option Set Details ===");
         sb.append("\r\n");
-        for (int i = 0; i < optionSetNum; i ++) {
+        for (int i = 0; i < this.getOptionSets().length; i ++) {
             sb.append("\r\n");
-            sb.append(opset[i].toString());
+            sb.append(this.getOptionSets()[i].toString());
             sb.append("Option Set Total Price: $");
-            sb.append(this.baseprice + opset[i].getOptionSetPrice());
+            sb.append(this.getBasePrice() + this.getOptionSets()[i].getOptionSetPrice());
             sb.append("\r\n");
         }
         return sb.toString();

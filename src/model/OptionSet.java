@@ -4,72 +4,108 @@ import java.io.Serializable;
 
 class OptionSet implements Serializable {
 	private static final long serialVersionUID = 3165531069817902853L;
-    private Option opt [];
+    private Option[] options;
     private String name;
+
     protected OptionSet() {}
-    protected OptionSet(String n, int size) {
-        opt = new Option[size];
-        name = n;
+
+    protected OptionSet(String name, int optionNum) {
+        this.name = name;
+        this.options = new Option[optionNum];
     }
+
+    // setter
 
     protected void setName(String name) {
         this.name = name;
     }
 
-    protected void setOpt(Option[] opt) {
-        this.opt = opt;
+    protected void setOptions(Option[] options) {
+        this.options = options;
     }
+
+    // getter
 
     protected String getName() {
         return this.name;
     }
 
-    protected Option[] getOpt() {
-        return opt;
+    protected Option[] getOptions() {
+        return this.options;
     }
+
+    // create
+    
+    protected void createOption(int optionIndex, String name, String value, float price) {
+    	this.getOptions()[optionIndex] = new Option(name, value, price);
+    }
+
+    // read
+    
+    protected Option getOption(int optionIndex) {
+    	return this.options[optionIndex];
+    }
+
+    protected Option getOption(String optionName) {
+    	for (int i = 0; i < this.getOptions().length; i ++) {
+    		if (this.getOptions()[i].getName().contentEquals(optionName))
+    			return this.getOptions()[i];
+    	}
+    	return null;
+    }
+
+    // update
+    
+    protected void setOption(int optionIndex, String name, String value, float price) {
+        Option option = this.getOptions()[optionIndex];
+        option.setName(name);
+        option.setValue(value);
+        option.setPrice(price);
+    }
+
+    // utils
 
     protected float getOptionSetPrice() {
         float result = 0;
-        for (int i = 0; i < opt.length; i ++) {
-            result += opt[i].getPrice();
+        for (int i = 0; i < this.getOptions().length; i ++) {
+            result += this.getOptions()[i].getPrice();
         }
         return result;
-    }
-
-    protected void setOptions(String[] optionNames, String[] optionArray) {
-        for (int i = 0; i < optionNames.length; i ++) {
-            opt[i] = new Option();
-            opt[i].setName(optionNames[i]);
-            opt[i].setValue(Integer.valueOf(optionArray[i + 1]));
-            opt[i].setPrice(opt[i].calcAddPrice());
-        }
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Option Set Name: ");
-        sb.append(this.name);
+        sb.append(this.getName());
         sb.append("\r\n");
-        for (int i = 0; i < opt.length; i ++) {
-            sb.append(opt[i].toString());
+        for (int i = 0; i < this.getOptions().length; i ++) {
+            sb.append(this.getOptions()[i].toString());
         }
         sb.append("Option Set Additional Price: $");
         sb.append(this.getOptionSetPrice());
         sb.append("\r\n");
         return sb.toString();
     }
-    
+
     class Option implements Serializable {
 		private static final long serialVersionUID = -1530653546780033372L;
 		private String name;
+        private String value;
         private float price;
-        private int value;
-    
+
+        protected Option(String name, String value, float price) {
+        	this.name = name;
+        	this.value = value;
+        	this.price = price;
+        }
+
+        // setter
+
         protected void setName(String name) {
             this.name = name;
         }
 
-        protected void setValue(int value) {
+        protected void setValue(String value) {
             this.value = value;
         }
 
@@ -77,74 +113,25 @@ class OptionSet implements Serializable {
             this.price = price;
         }
 
+        // getter
+
         protected String getName() {
-            return name;
+            return this.name;
         }
 
-        protected int getValue() {
-            return value;
+        protected String getValue() {
+            return this.value;
         }
 
         protected float getPrice() {
             return this.price;
         }
-        
-        protected float calcAddPrice() {
-            float result = 0;
-            if ("Color".equals(name))
-                result = 0;
-            else if ("Transmission".equals(name))
-                result = value == 0 ? 0 : 815;
-            else if ("Brakes/Traction Control".equals(name))
-                result = value == 0 ? 0 : value == 1 ? 400 : 1625;
-            else if ("Side Impact Air Bags".equals(name))
-                result = value == 0 ? 0 : 350;
-            else if ("Power Moonroof".equals(name))
-                result = value == 0 ? 0 : 595;
 
-            return result;
-        }
-
-        protected String getOptionLabel(String optName, int value) {
-            String result = "";
-            if ("Color".equals(optName)) {
-                if (value == 0)
-                    result = "Fort Knox Gold Clearcoat Metallic";
-                else if (value == 1)
-                    result = "Liquid Grey Clearcoat Metallic";
-                else if (value == 2)
-                    result = "Infra-Red Clearcoat";
-                else if (value == 3)
-                    result = "Grabber Green Clearcoat Metallic";
-                else if (value == 4)
-                    result = "Sangria Red Clearcoat Metallic";
-                else if (value == 5)
-                    result = "French Blue Clearcoat Metallic";
-                else if (value == 6)
-                    result = "Twilight Blue Clearcoat Metallic";
-                else if (value == 7)
-                    result = "CD Silver Clearcoat Metallic";
-                else if (value == 8)
-                    result = "Pitch Black Clearcoat";
-                else if (value == 9)
-                    result = "Cloud 9 White Clearcoat"; 
-            } else if ("Transmission".equals(optName))
-                result = value == 0 ? "automatic" : "manual";
-            else if ("Brakes/Traction Control".equals(optName))
-                result = value == 0 ? "Standard" : value == 1 ? "ABS" : "ABS with Advance Tra";
-            else if ("Side Impact Air Bags".equals(optName))
-                result = value == 0 ? "present" : "not present";
-            else if ("Power Moonroof".equals(optName))
-                result = value == 0 ? "present" : "not present";
-
-            return result;
-        }
-        
         public String toString() {
         	StringBuilder sb = new StringBuilder();
         	sb.append(this.getName());
             sb.append(": ");
-            sb.append(this.getOptionLabel(this.getName(), this.getValue()));
+            sb.append(this.getValue());
             sb.append("\r\n");
             return sb.toString();
         }
