@@ -2,4 +2,5 @@ bin/*
 *.classpath
 *.metadata
 *.project
+*.ser
 /bin/
