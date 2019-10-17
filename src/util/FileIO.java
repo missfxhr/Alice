@@ -2,6 +2,7 @@ package util;
 
 import java.io.*;
 
+import exception.AutoException;
 import model.Automobile;
 
 public class FileIO {
@@ -9,35 +10,40 @@ public class FileIO {
 	public static String ATTRIBUTE_SPLITER = "\\|\\|\\|";
 	public static String SER_FILE_TYPE = ".ser";
 
-	public static Automobile readFile(String fileName) {
+	public static Automobile readFile(String fileName) throws AutoException {
 		Automobile am = null;
 		try {
 	        StringBuilder sb = new StringBuilder(BASE_PATH);
 	        sb.append(fileName);
 	        FileReader file = new FileReader(sb.toString());
 	        BufferedReader buff = new BufferedReader(file);
-	
+
 	        String line = buff.readLine();
 	        String[] attrArray = line.split(ATTRIBUTE_SPLITER);
-	        am = new Automobile(attrArray[0], Float.valueOf(attrArray[1]), Integer.valueOf(attrArray[2]), Integer.valueOf(attrArray[3]));
-	    	int optionSetIndex = 0;
+	        am = new Automobile(attrArray[0], attrArray[1], Float.valueOf(attrArray[2]));
+	        String optionSetName = null;
 	        while (true) {
 	        	line = buff.readLine();
 	        	if (line == null)
 	        		break;
-	
-	            am.createOptionSet(optionSetIndex, line);
-	        	for (int optionIndex = 0; optionIndex < am.getOptionNum(); optionIndex ++) {
-	        		line = buff.readLine();
-	        		String[] optAttrArray = line.split(ATTRIBUTE_SPLITER);
-	        		am.createOption(optionSetIndex, optionIndex, optAttrArray[0], optAttrArray[1], Float.valueOf(optAttrArray[2]));
+	        	
+	        	String[] optAttrArray = line.trim().split(ATTRIBUTE_SPLITER);
+	        	if (optAttrArray.length == 1) {
+	        		optionSetName = optAttrArray[0];
+	        		am.createOptionSet(optionSetName);
+	        	} else if (optAttrArray.length == 2) {
+	        		am.createOption(optionSetName, optAttrArray[0], Float.valueOf(optAttrArray[1]));
 	        	}
-	        	optionSetIndex ++;
 	        }
 	        buff.close();
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}
+			throw new AutoException(3);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NumberFormatException e) {
+        	throw new AutoException(0);
+        }
 		return am;
     }
 

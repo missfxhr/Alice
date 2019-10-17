@@ -1,17 +1,19 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 class OptionSet implements Serializable {
 	private static final long serialVersionUID = 3165531069817902853L;
-    private Option[] options;
+    private ArrayList<Option> options;
     private String name;
+    private Option choice = null;
 
     protected OptionSet() {}
 
-    protected OptionSet(String name, int optionNum) {
+    protected OptionSet(String name) {
         this.name = name;
-        this.options = new Option[optionNum];
+        this.options = new ArrayList<Option>();
     }
 
     // setter
@@ -20,8 +22,12 @@ class OptionSet implements Serializable {
         this.name = name;
     }
 
-    protected void setOptions(Option[] options) {
+    protected void setOptions(ArrayList<Option> options) {
         this.options = options;
+    }
+
+    protected void setChoice(Option choice) {
+        this.choice = choice;
     }
 
     // getter
@@ -30,72 +36,75 @@ class OptionSet implements Serializable {
         return this.name;
     }
 
-    protected Option[] getOptions() {
+    protected ArrayList<Option> getOptions() {
         return this.options;
+    }
+
+    protected Option getChoice() {
+        return this.choice;
     }
 
     // create
     
-    protected void createOption(int optionIndex, String name, String value, float price) {
-    	this.getOptions()[optionIndex] = new Option(name, value, price);
+    protected void createOption(String name, float price) {
+    	this.getOptions().add(new Option(name, price));
     }
 
     // read
-    
-    protected Option getOption(int optionIndex) {
-    	return this.options[optionIndex];
-    }
 
     protected Option getOption(String optionName) {
-    	for (int i = 0; i < this.getOptions().length; i ++) {
-    		if (this.getOptions()[i].getName().contentEquals(optionName))
-    			return this.getOptions()[i];
+    	for (Option option : this.getOptions()) {
+    		if (option.getName().contentEquals(optionName))
+    			return option;
     	}
     	return null;
     }
 
+    protected Option getOptionChoice() {
+    	return this.getChoice();
+    }
+    
     // update
     
-    protected void setOption(int optionIndex, String name, String value, float price) {
-        Option option = this.getOptions()[optionIndex];
+    protected void setOption(String optionName, String name, float price) {
+        Option option = this.getOption(optionName);
         option.setName(name);
-        option.setValue(value);
         option.setPrice(price);
     }
 
-    // utils
-
-    protected float getOptionSetPrice() {
-        float result = 0;
-        for (int i = 0; i < this.getOptions().length; i ++) {
-            result += this.getOptions()[i].getPrice();
-        }
-        return result;
+    protected void setOptionChoice(String optionName) {
+    	Option option = this.getOption(optionName);
+    	this.setChoice(option);
     }
 
+    // delete
+    
+    protected void deleteOption(String optionName) {
+    	Option option = this.getOption(optionName);
+    	if (option == null)
+    		return;
+
+    	this.getOptions().remove(option);
+    }
+    
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Option Set Name: ");
         sb.append(this.getName());
         sb.append("\r\n");
-        for (int i = 0; i < this.getOptions().length; i ++) {
-            sb.append(this.getOptions()[i].toString());
+        for (Option option : this.getOptions()) {
+            sb.append(option.toString());
         }
-        sb.append("Option Set Additional Price: $");
-        sb.append(this.getOptionSetPrice());
-        sb.append("\r\n");
         return sb.toString();
     }
 
     class Option implements Serializable {
 		private static final long serialVersionUID = -1530653546780033372L;
 		private String name;
-        private String value;
         private float price;
 
-        protected Option(String name, String value, float price) {
+        protected Option(String name, float price) {
         	this.name = name;
-        	this.value = value;
         	this.price = price;
         }
 
@@ -103,10 +112,6 @@ class OptionSet implements Serializable {
 
         protected void setName(String name) {
             this.name = name;
-        }
-
-        protected void setValue(String value) {
-            this.value = value;
         }
 
         protected void setPrice(float price) {
@@ -119,10 +124,6 @@ class OptionSet implements Serializable {
             return this.name;
         }
 
-        protected String getValue() {
-            return this.value;
-        }
-
         protected float getPrice() {
             return this.price;
         }
@@ -130,8 +131,8 @@ class OptionSet implements Serializable {
         public String toString() {
         	StringBuilder sb = new StringBuilder();
         	sb.append(this.getName());
-            sb.append(": ");
-            sb.append(this.getValue());
+            sb.append(": $");
+            sb.append(this.getPrice());
             sb.append("\r\n");
             return sb.toString();
         }

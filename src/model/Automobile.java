@@ -1,89 +1,91 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import model.OptionSet.Option;
 
 public class Automobile implements Serializable { //This class will represent the Model.
 	private static final long serialVersionUID = -1459660698127308486L;
 
-	private String name;
+	private String make;
+	private String model;
 	private float basePrice;
-    private int optionNum;
-    private OptionSet optionSets[];
+    private ArrayList<OptionSet> optionSets;
+    private ArrayList<Option> choice;
 
-    public Automobile() {}
+	public Automobile() {}
 
-    public Automobile(String name, float basePrice, int optionNum, int optionSetNum) {
-    	this.name = name;
+    public Automobile(String make, String model, float basePrice) {
+    	this.make = make;
+    	this.model = model;
     	this.basePrice = basePrice;
-    	this.optionNum = optionNum;
-    	this.optionSets = new OptionSet[optionSetNum];
+    	this.optionSets = new ArrayList<OptionSet>();
     }
 
     // setter
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setMake(String make) {
+		this.make = make;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
 
     public void setBasePrice(float basePrice) {
         this.basePrice = basePrice;
     }
-
-    public void setOptionNum(int optionNum) {
-    	this.optionNum = optionNum;
-    }
     
-	public void setOptionSets(OptionSet[] optionSets) {
+	public void setOptionSets(ArrayList<OptionSet> optionSets) {
 		this.optionSets = optionSets;
 	}
 
+	public void setChoice(ArrayList<Option> choice) {
+		this.choice = choice;
+	}
+	
 	// getter
 
-    public String getName() {
-		return this.name;
+	public String getMake() {
+		return make;
+	}
+
+	public String getModel() {
+		return model;
 	}
 
 	public float getBasePrice() {
 		return this.basePrice;
 	}
 
-	public int getOptionNum() {
-		return this.optionNum;
+    public ArrayList<OptionSet> getOptionSets() {
+		return this.optionSets;
 	}
 
-    public OptionSet[] getOptionSets() {
-		return this.optionSets;
+    public ArrayList<Option> getChoice() {
+		return this.choice;
 	}
 
     // Create
 
-    public void createOptionSet(int index, String name) {
-    	this.optionSets[index] = new OptionSet(name, this.getOptionNum());
+    public void createOptionSet(String name) {
+    	this.optionSets.add(new OptionSet(name));
     }
 
-    public void createOption(int optionSetIndex, int optionIndex, String name, String value, float price) {
-    	OptionSet optionSet = this.getOptionSet(optionSetIndex);
-    	optionSet.createOption(optionIndex, name, value, price);
+    public void createOption(String optionSetName, String optionName, float price) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	optionSet.createOption(optionName, price);
     }
 
     // Read
-    
-    public OptionSet getOptionSet(int index) {
-    	return this.optionSets[index];
-    }
 
     public OptionSet getOptionSet(String name) {
-    	for (int i = 0; i < this.getOptionSets().length; i ++) {
-    		if (this.getOptionSets()[i].getName().contentEquals(name))
-    			return this.getOptionSets()[i];
+    	for (OptionSet optionSet : this.getOptionSets()) {
+    		if (optionSet.getName().contentEquals(name))
+    			return optionSet;
     	}
     	return null;
-    }
-    
-    public Option getOption(int optionSetIndex, int optionIndex) {
-    	return this.getOptionSet(optionSetIndex).getOption(optionIndex);
     }
 
     public Option getOption(String optionSetName, String optionName) {
@@ -94,6 +96,15 @@ public class Automobile implements Serializable { //This class will represent th
     	return optionSet.getOption(optionName);
     }
 
+    public String getOptionChoice(String optionSetName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	return optionSet.getOptionChoice().getName();
+    }
+
+    public float getOptionChoicePrice(String optionSetName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	return optionSet.getOptionChoice().getPrice();
+    }
 
     // update
 
@@ -113,25 +124,58 @@ public class Automobile implements Serializable { //This class will represent th
     	option.setPrice(newPrice);
     }
 
+    public void setOptionChoice(String optionSetName, String optionName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	optionSet.setOptionChoice(optionName);
+    }
+
+    // delete
+    
+    public void deleteOptionSet(String optionSetName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	if (optionSet == null)
+    		return;
+
+    	this.getOptionSets().remove(optionSet);
+    }
+    
+    public void deleteOption(String optionSetName, String optionName) {
+    	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	if (optionSet == null)
+    		return;
+
+    	optionSet.deleteOption(optionName);
+    }
+
+    // utils
+
+    public String getName() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(this.getMake());
+        sb.append(" ");
+        sb.append(this.getModel());
+        return sb.toString();
+    }
+    
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Model Name: ");
-        sb.append(this.getName());
+        sb.append("Make: ");
+        sb.append(this.getMake());
         sb.append("\r\n");
-        sb.append("Base Price: ");
+        sb.append("Model: ");
+        sb.append(this.getModel());
+        sb.append("\r\n");
+        sb.append("Base Price: $");
         sb.append(this.getBasePrice());
         sb.append("\r\n");
         sb.append("Number of Option Sets: ");
-        sb.append(this.getOptionSets().length);
+        sb.append(this.getOptionSets().size());
         sb.append("\r\n");
         sb.append("\r\n");
-        sb.append("=== Option Set Details ===");
+        sb.append("====== Option Set Details ======");
         sb.append("\r\n");
-        for (int i = 0; i < this.getOptionSets().length; i ++) {
-            sb.append("\r\n");
-            sb.append(this.getOptionSets()[i].toString());
-            sb.append("Option Set Total Price: $");
-            sb.append(this.getBasePrice() + this.getOptionSets()[i].getOptionSetPrice());
+        for (OptionSet optionSet : this.getOptionSets()) {
+            sb.append(optionSet.toString());
             sb.append("\r\n");
         }
         return sb.toString();
@@ -140,4 +184,8 @@ public class Automobile implements Serializable { //This class will represent th
     public void print() {
         System.out.println(this.toString());
     }
+
+
+
+
 }
