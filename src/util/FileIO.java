@@ -26,7 +26,7 @@ public class FileIO {
 	        	line = buff.readLine();
 	        	if (line == null)
 	        		break;
-	        	
+
 	        	String[] optAttrArray = line.trim().split(ATTRIBUTE_SPLITER);
 	        	if (optAttrArray.length == 1) {
 	        		optionSetName = optAttrArray[0];
@@ -37,7 +37,6 @@ public class FileIO {
 	        }
 	        buff.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 			throw new AutoException(3);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -46,6 +45,30 @@ public class FileIO {
         }
 		return am;
     }
+
+	public static boolean createFile(String fileName) {
+		boolean result = false;
+		try {
+			StringBuilder sb = new StringBuilder(BASE_PATH);
+			sb.append(fileName);
+			File file = new File(sb.toString());
+			return file.createNewFile();
+		} catch (Exception e) {
+			return result;
+		}
+	}
+
+	public static void writeToFile(String fileName, String content) {
+		try {
+			StringBuilder sb = new StringBuilder(BASE_PATH);
+			sb.append(fileName);
+			FileWriter writer = new FileWriter(sb.toString(), true);
+			writer.write(content);
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static String serialize(Automobile am) {
 		String fileName = null;

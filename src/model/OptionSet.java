@@ -63,7 +63,7 @@ class OptionSet implements Serializable {
     protected Option getOptionChoice() {
     	return this.getChoice();
     }
-    
+
     // update
     
     protected void setOption(String optionName, String name, float price) {
@@ -136,6 +136,5 @@ class OptionSet implements Serializable {
             sb.append("\r\n");
             return sb.toString();
         }
-
     }
 }

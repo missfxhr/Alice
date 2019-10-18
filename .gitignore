@@ -3,4 +3,5 @@ bin/*
 *.metadata
 *.project
 *.ser
+*.log
 /bin/

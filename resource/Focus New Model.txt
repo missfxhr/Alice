@@ -1,0 +1,18 @@
+Ford|||Focus New Model|||15000
+Color
+Color_1|||100
+Color_2|||200
+Color_3|||300
+Transmission
+automatic|||0
+standard|||-200
+Brakes/Traction Control
+standard|||0
+ABS|||500
+ABS with Advance Tra|||1500
+Side Impact Air Bags
+none|||0
+selected|||400
+Power Moonroof
+none|||0
+selected|||800

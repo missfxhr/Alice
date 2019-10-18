@@ -21,6 +21,7 @@ public class Automobile implements Serializable { //This class will represent th
     	this.model = model;
     	this.basePrice = basePrice;
     	this.optionSets = new ArrayList<OptionSet>();
+    	this.choice = new ArrayList<Option>();
     }
 
     // setter
@@ -98,6 +99,9 @@ public class Automobile implements Serializable { //This class will represent th
 
     public String getOptionChoice(String optionSetName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	if (optionSet == null)
+    		return null;
+
     	return optionSet.getOptionChoice().getName();
     }
 
@@ -116,6 +120,14 @@ public class Automobile implements Serializable { //This class will represent th
     	optionSet.setName(newName);
     }
 
+    public void updateOptionName(String optionSetName, String optionName, String newName) {
+    	Option option = this.getOption(optionSetName, optionName);
+    	if (option == null)
+    		return;
+
+    	option.setName(newName);
+    }
+
     public void updateOptionPrice(String optionSetName, String optionName, float newPrice) {
     	Option option = this.getOption(optionSetName, optionName);
     	if (option == null)
@@ -126,11 +138,17 @@ public class Automobile implements Serializable { //This class will represent th
 
     public void setOptionChoice(String optionSetName, String optionName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
+    	if (optionSet == null)
+    		return;
+
     	optionSet.setOptionChoice(optionName);
+    	Option option = optionSet.getOptionChoice();
+    	if (!this.choice.contains(option))
+    		choice.add(option);
     }
 
     // delete
-    
+
     public void deleteOptionSet(String optionSetName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
@@ -138,7 +156,7 @@ public class Automobile implements Serializable { //This class will represent th
 
     	this.getOptionSets().remove(optionSet);
     }
-    
+
     public void deleteOption(String optionSetName, String optionName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
@@ -156,9 +174,22 @@ public class Automobile implements Serializable { //This class will represent th
         sb.append(this.getModel());
         return sb.toString();
     }
-    
+
+    public float getChoicePrice() {
+    	float totalPrice = 0;
+    	for (Option option : this.getChoice())
+    		totalPrice += option.getPrice();
+    	return totalPrice;
+    }
+
+    public float getTotalPrice() {
+    	return this.getBasePrice() + this.getChoicePrice();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("====== Model Details ======");
+        sb.append("\r\n");
         sb.append("Make: ");
         sb.append(this.getMake());
         sb.append("\r\n");
@@ -178,14 +209,21 @@ public class Automobile implements Serializable { //This class will represent th
             sb.append(optionSet.toString());
             sb.append("\r\n");
         }
+        sb.append("====== User Selection Details ======");
+        sb.append("\r\n");
+        for (Option option : this.getChoice()) {
+        	sb.append(option.toString());
+        }
+        sb.append("Choice Price: $");
+        sb.append(this.getChoicePrice());
+        sb.append("\r\n");
+        sb.append("Total Price: $");
+        sb.append(this.getTotalPrice());
+        sb.append("\r\n");
         return sb.toString();
     }
 
     public void print() {
         System.out.println(this.toString());
     }
-
-
-
-
 }

@@ -1,5 +1,13 @@
 package adapter;
 
 public interface FixAuto {
-	public void fix(int codeNum);
+	public void fixMissingPrice();
+
+	public void fixMissingOptionSetData();
+
+	public void fixMissingOptionData();
+
+	public void fixMissingFileName();
+
+	public void fixMissingMake();
 }
