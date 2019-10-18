@@ -15,10 +15,27 @@ public class Driver {
 		sb.append(MODEL_FILE_TYPE);
 		return sb.toString();
 	}
-	
-	
+
+	private void testStart(int testNum) {
+		StringBuilder sb = new StringBuilder("/**************** Beginning of test");
+		sb.append(testNum);
+		sb.append(" ****************/");
+		sb.append("\r\n");
+		System.out.println(sb.toString());
+	}
+
+	private void testEnd(int testNum) {
+		StringBuilder sb = new StringBuilder("/**************** End of test");
+		sb.append(testNum);
+		sb.append(" ****************/");
+		sb.append("\r\n");
+		sb.append("\r\n");
+		System.out.println(sb.toString());
+	}
+
 	// test for assignment 1 - FileIO and serialize
 	public void test1() {
+		testStart(1);
 		Automobile am = null;
 		try {
 			am = FileIO.readFile("Focus Wagon ZTW.txt");
@@ -34,10 +51,12 @@ public class Driver {
         Automobile newAm = FileIO.deserialize(fileName);
         newAm.print();
         System.out.println(am.toString().contentEquals(newAm.toString()));
+        testEnd(1);
 	}
 
 	// test for assignment 2 - interface and custom exception
 	public void test2() {
+		testStart(2);
 		String modelName = "Focus Wagon ZTW";
 		CreateAuto ca = new BuildAuto();
 		// verify the AutoException is thrown
@@ -48,10 +67,12 @@ public class Driver {
 		ua.updateOptionSetName(modelName, "Color", "Colors");
 		ua.updateOptionPrice(modelName, "Colors", "Infra-Red Clearcoat", 200);
 		ca.printAuto(modelName);
+		testEnd(2);
 	}
 
 	// test for assignment 3 - multi-model supports 
 	public void test3() {
+		testStart(3);
 		CreateAuto ca = new BuildAuto();
 		UpdateAuto ua = new BuildAuto();
 
@@ -83,5 +104,6 @@ public class Driver {
 		ua.updateOptionPrice(model1, "Color", "Cloud 9 White Clearcoat", 100);
 		// print out details
 		ca.printAuto(model1);
+		testEnd(3);
 	}
 }
