@@ -108,20 +108,26 @@ public class Driver {
 		testEnd(3);
 	}
 	
-	// test for assignment 4 - multi-thread editing model 
-		public void test4() {
-			testStart(4);
-			String modelName = "Focus Wagon ZTW";
-			CreateAuto ca = new BuildAuto();
-			ca.buildAuto(this.getFileName(modelName));
+	// test for assignment 4 - multi-thread editing model
+	// As we can see from the printed results
+	// Each thread takes turn to access the given model, no crossover
+	// Printed information also reflected the content which got edited by that thread
+	public void test4() {
+		testStart(4);
+		String modelName = "Focus Wagon ZTW";
+		CreateAuto ca = new BuildAuto();
+		ca.buildAuto(this.getFileName(modelName));
 
-			EditOption eo1 = new EditOption(modelName, "thread-1", 1);
-			EditOption eo2 = new EditOption(modelName, "thread-2", 2);
-			EditOption eo3 = new EditOption(modelName, "thread-3", 3);
+		EditOption eo1 = new EditOption(modelName, "thread-1");
+		eo1.updateOptionPrice("Transmission", "automatic", 100.0f);
+		EditOption eo2 = new EditOption(modelName, "thread-2");
+		eo2.updateOptionChoice("Transmission", "automatic");
+		EditOption eo3 = new EditOption(modelName, "thread-3");
+		eo3.updateOptionChoice("Color", "Grabber Green Clearcoat Metallic");
 
-			eo1.start();
-			eo2.start();
-			eo3.start();
-			testEnd(4);
-		}
+		eo1.start();
+		eo2.start();
+		eo3.start();
+		testEnd(4);
+	}
 }

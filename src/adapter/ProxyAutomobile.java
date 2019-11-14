@@ -23,7 +23,7 @@ public abstract class ProxyAutomobile {
 
 	// utils
 
-	public synchronized Automobile findModel(String modelName) {
+	public Automobile findModel(String modelName) {
 		Set<Entry<Automobile, String>> entrySet = automobiles.entrySet();
 		Iterator<Entry<Automobile, String>> it = entrySet.iterator();
 		while (it.hasNext()) {
@@ -106,6 +106,9 @@ public abstract class ProxyAutomobile {
 
 	// EditAuto (Supports MultiThread)
 
+	// This is the place where the key logic locates
+	// We allow one thread to access a model instance only if there is no other thread visiting it
+	// If there is, current thread need to wait until notified
 	public synchronized boolean waitUntilModelIsAvailable(String modelName, String threadID) {
 		Set<Entry<Automobile, String>> entrySet = automobiles.entrySet();
 		Iterator<Entry<Automobile, String>> it = entrySet.iterator();
@@ -142,16 +145,16 @@ public abstract class ProxyAutomobile {
 
 		am.setOptionChoice(optionSetName, optionName);		
 	}
-	
+
 	public synchronized void printEditedModel(String threadID) {
 		if (am == null)
 			return;
 
-
-		System.out.println("Edited by " + threadID + ":");
 		am.print();
 	}
-	
+
+	// One thread releases the lock when this method is called
+	// In another word, one thread can finish as much edit as possible before it wants to release the lock
 	public synchronized void closeEditing() {
 		automobiles.put(am, null);
 		am = null;
