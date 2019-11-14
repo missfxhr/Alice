@@ -12,21 +12,26 @@ import util.FileIO;
 public abstract class ProxyAutomobile {
 	private static final String DEFAULT_MAKE = "Ford";
 	private static final float DEFAULT_BASE_PRICE = 18445;
+	
+	// This LinkedHashMap stores different model instances
+	// key: model instance with a unique model name
+	// value: name of the Thread ID which is currently occupying this model instance, null if vacant
+	private static final LinkedHashMap<Automobile, String> automobiles = new LinkedHashMap<Automobile, String>();
 
-	private static Automobile am;
-	private static LinkedHashMap<String, Automobile> automobiles = new LinkedHashMap<String, Automobile>();
+	// This refers to the model instance that current thread is modifying
+	private Automobile am = null;
 
 	// utils
 
-	public Automobile findModel(String modelName) {
-		Set<Entry<String, Automobile>> entrySet = automobiles.entrySet();
-		Iterator<Entry<String, Automobile>> it = entrySet.iterator();
+	public synchronized Automobile findModel(String modelName) {
+		Set<Entry<Automobile, String>> entrySet = automobiles.entrySet();
+		Iterator<Entry<Automobile, String>> it = entrySet.iterator();
 		while (it.hasNext()) {
-			Entry<String, Automobile> entry = it.next();
-			if (!entry.getKey().contentEquals(modelName))
+			Entry<Automobile, String> entry = it.next();
+			if (!entry.getKey().getModel().contentEquals(modelName))
 				continue;
 
-			return entry.getValue();
+			return entry.getKey();
 		}
 		return null;
 	}
@@ -35,11 +40,11 @@ public abstract class ProxyAutomobile {
 
 	public void buildAuto(String fileName) {
 		try {
-			am = FileIO.readFile(fileName);
-			if (am == null)
+			Automobile automobile = FileIO.readFile(fileName);
+			if (automobile == null)
 				return;
 
-			automobiles.put(am.getModel(), am);
+			automobiles.put(automobile, null);
 		} catch (AutoException e) {
 			e.printErrorMessage();
 			e.dumpToErrorLogFile();
@@ -56,18 +61,27 @@ public abstract class ProxyAutomobile {
 	// UpdateAuto
 
 	public void updateOptionSetName(String modelName, String optionSetName, String newName) {
-		am = this.findModel(modelName);
-		am.updateOptionSetName(optionSetName, newName);
+		Automobile automobile = this.findModel(modelName);
+		if (automobile == null)
+			return;
+
+		automobile.updateOptionSetName(optionSetName, newName);
 	}
 
 	public void updateOptionPrice(String modelName, String optionSetName, String optionName, float newPrice) {
-		am = this.findModel(modelName);
-		am.updateOptionPrice(optionSetName, optionName, newPrice);
+		Automobile automobile = this.findModel(modelName);
+		if (automobile == null)
+			return;
+
+		automobile.updateOptionPrice(optionSetName, optionName, newPrice);
 	}
 
 	public void updateOptionChoice(String modelName, String optionSetName, String optionName) {
-		am = this.findModel(modelName);
-		am.setOptionChoice(optionSetName, optionName);
+		Automobile automobile = this.findModel(modelName);
+		if (automobile == null)
+			return;
+
+		automobile.setOptionChoice(optionSetName, optionName);
 	}
 
 	// FixAuto
@@ -88,5 +102,59 @@ public abstract class ProxyAutomobile {
 
 	public void fixMissingMake() {
 		am.setMake(DEFAULT_MAKE);
+	}
+
+	// EditAuto (Supports MultiThread)
+
+	public synchronized boolean waitUntilModelIsAvailable(String modelName, String threadID) {
+		Set<Entry<Automobile, String>> entrySet = automobiles.entrySet();
+		Iterator<Entry<Automobile, String>> it = entrySet.iterator();
+		while (it.hasNext()) {
+			Entry<Automobile, String> entry = it.next();
+			if (!entry.getKey().getModel().contentEquals(modelName))
+				continue;
+
+			while (entry.getValue() != null) {
+				try {
+					wait();
+				} catch (InterruptedException e)  {
+	                Thread.currentThread().interrupt(); 
+	                System.out.println("Thread interrupted."); 
+	            }
+			}
+			this.am = entry.getKey();
+			entry.setValue(threadID);
+			return true;
+		}
+		return false;
+	}
+
+	public synchronized void editOptionPrice(String optionSetName, String optionName, float newPrice) {
+		if (am == null)
+			return;
+
+		am.updateOptionPrice(optionSetName, optionName, newPrice);		
+	}
+
+	public synchronized void editChoice(String optionSetName, String optionName) {
+		if (am == null)
+			return;
+
+		am.setOptionChoice(optionSetName, optionName);		
+	}
+	
+	public synchronized void printEditedModel(String threadID) {
+		if (am == null)
+			return;
+
+
+		System.out.println("Edited by " + threadID + ":");
+		am.print();
+	}
+	
+	public synchronized void closeEditing() {
+		automobiles.put(am, null);
+		am = null;
+		notifyAll();
 	}
 }

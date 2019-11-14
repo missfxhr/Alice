@@ -26,62 +26,62 @@ public class Automobile implements Serializable { //This class will represent th
 
     // setter
 
-	public void setMake(String make) {
+	public synchronized void setMake(String make) {
 		this.make = make;
 	}
 
-	public void setModel(String model) {
+	public synchronized void setModel(String model) {
 		this.model = model;
 	}
 
-    public void setBasePrice(float basePrice) {
+    public synchronized void setBasePrice(float basePrice) {
         this.basePrice = basePrice;
     }
     
-	public void setOptionSets(ArrayList<OptionSet> optionSets) {
+	public synchronized void setOptionSets(ArrayList<OptionSet> optionSets) {
 		this.optionSets = optionSets;
 	}
 
-	public void setChoice(ArrayList<Option> choice) {
+	public synchronized void setChoice(ArrayList<Option> choice) {
 		this.choice = choice;
 	}
 	
 	// getter
 
-	public String getMake() {
+	public synchronized String getMake() {
 		return make;
 	}
 
-	public String getModel() {
+	public synchronized String getModel() {
 		return model;
 	}
 
-	public float getBasePrice() {
+	public synchronized float getBasePrice() {
 		return this.basePrice;
 	}
 
-    public ArrayList<OptionSet> getOptionSets() {
+    public synchronized ArrayList<OptionSet> getOptionSets() {
 		return this.optionSets;
 	}
 
-    public ArrayList<Option> getChoice() {
+    public synchronized ArrayList<Option> getChoice() {
 		return this.choice;
 	}
 
     // Create
 
-    public void createOptionSet(String name) {
+    public synchronized void createOptionSet(String name) {
     	this.optionSets.add(new OptionSet(name));
     }
 
-    public void createOption(String optionSetName, String optionName, float price) {
+    public synchronized void createOption(String optionSetName, String optionName, float price) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	optionSet.createOption(optionName, price);
     }
 
     // Read
 
-    public OptionSet getOptionSet(String name) {
+    public synchronized OptionSet getOptionSet(String name) {
     	for (OptionSet optionSet : this.getOptionSets()) {
     		if (optionSet.getName().contentEquals(name))
     			return optionSet;
@@ -89,7 +89,7 @@ public class Automobile implements Serializable { //This class will represent th
     	return null;
     }
 
-    public Option getOption(String optionSetName, String optionName) {
+    public synchronized Option getOption(String optionSetName, String optionName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
     		return null;
@@ -97,7 +97,7 @@ public class Automobile implements Serializable { //This class will represent th
     	return optionSet.getOption(optionName);
     }
 
-    public String getOptionChoice(String optionSetName) {
+    public synchronized String getOptionChoice(String optionSetName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
     		return null;
@@ -105,14 +105,14 @@ public class Automobile implements Serializable { //This class will represent th
     	return optionSet.getOptionChoice().getName();
     }
 
-    public float getOptionChoicePrice(String optionSetName) {
+    public synchronized float getOptionChoicePrice(String optionSetName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	return optionSet.getOptionChoice().getPrice();
     }
 
     // update
 
-    public void updateOptionSetName(String optionSetName, String newName) {
+    public synchronized void updateOptionSetName(String optionSetName, String newName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
     		return;
@@ -120,7 +120,7 @@ public class Automobile implements Serializable { //This class will represent th
     	optionSet.setName(newName);
     }
 
-    public void updateOptionName(String optionSetName, String optionName, String newName) {
+    public synchronized void updateOptionName(String optionSetName, String optionName, String newName) {
     	Option option = this.getOption(optionSetName, optionName);
     	if (option == null)
     		return;
@@ -128,7 +128,7 @@ public class Automobile implements Serializable { //This class will represent th
     	option.setName(newName);
     }
 
-    public void updateOptionPrice(String optionSetName, String optionName, float newPrice) {
+    public synchronized void updateOptionPrice(String optionSetName, String optionName, float newPrice) {
     	Option option = this.getOption(optionSetName, optionName);
     	if (option == null)
     		return;
@@ -136,7 +136,7 @@ public class Automobile implements Serializable { //This class will represent th
     	option.setPrice(newPrice);
     }
 
-    public void setOptionChoice(String optionSetName, String optionName) {
+    public synchronized void setOptionChoice(String optionSetName, String optionName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
     		return;
@@ -149,7 +149,7 @@ public class Automobile implements Serializable { //This class will represent th
 
     // delete
 
-    public void deleteOptionSet(String optionSetName) {
+    public synchronized void deleteOptionSet(String optionSetName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
     		return;
@@ -157,7 +157,7 @@ public class Automobile implements Serializable { //This class will represent th
     	this.getOptionSets().remove(optionSet);
     }
 
-    public void deleteOption(String optionSetName, String optionName) {
+    public synchronized void deleteOption(String optionSetName, String optionName) {
     	OptionSet optionSet = this.getOptionSet(optionSetName);
     	if (optionSet == null)
     		return;
@@ -167,7 +167,7 @@ public class Automobile implements Serializable { //This class will represent th
 
     // utils
 
-    public String getName() {
+    public synchronized String getName() {
     	StringBuilder sb = new StringBuilder();
     	sb.append(this.getMake());
         sb.append(" ");
@@ -175,18 +175,18 @@ public class Automobile implements Serializable { //This class will represent th
         return sb.toString();
     }
 
-    public float getChoicePrice() {
+    public synchronized float getChoicePrice() {
     	float totalPrice = 0;
     	for (Option option : this.getChoice())
     		totalPrice += option.getPrice();
     	return totalPrice;
     }
 
-    public float getTotalPrice() {
+    public synchronized float getTotalPrice() {
     	return this.getBasePrice() + this.getChoicePrice();
     }
 
-    public String toString() {
+    public synchronized String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("====== Model Details ======");
         sb.append("\r\n");
@@ -223,7 +223,7 @@ public class Automobile implements Serializable { //This class will represent th
         return sb.toString();
     }
 
-    public void print() {
+    public synchronized void print() {
         System.out.println(this.toString());
     }
 }

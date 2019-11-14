@@ -1,6 +1,7 @@
 package driver;
 
 import model.*;
+import scale.EditOption;
 import util.*;
 
 import adapter.*;
@@ -106,4 +107,21 @@ public class Driver {
 		ca.printAuto(model1);
 		testEnd(3);
 	}
+	
+	// test for assignment 4 - multi-thread editing model 
+		public void test4() {
+			testStart(4);
+			String modelName = "Focus Wagon ZTW";
+			CreateAuto ca = new BuildAuto();
+			ca.buildAuto(this.getFileName(modelName));
+
+			EditOption eo1 = new EditOption(modelName, "thread-1", 1);
+			EditOption eo2 = new EditOption(modelName, "thread-2", 2);
+			EditOption eo3 = new EditOption(modelName, "thread-3", 3);
+
+			eo1.start();
+			eo2.start();
+			eo3.start();
+			testEnd(4);
+		}
 }
