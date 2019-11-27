@@ -3,6 +3,7 @@ package adapter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import exception.AutoException;
@@ -36,6 +37,37 @@ public abstract class ProxyAutomobile {
 		return null;
 	}
 
+	public void printAuto(String modelName) {
+		Automobile automobile = findModel(modelName);
+		if (automobile != null)
+			automobile.print();
+	}
+
+	public String getAllModels() {
+		StringBuilder sb = new StringBuilder();
+		int i = 1;
+		for (Automobile am : automobiles.keySet()) {  
+			sb.append(i);
+			sb.append(".");
+			sb.append("\r\n");
+			sb.append(am.toString());
+			sb.append("\r\n");
+			i ++;
+        }
+		return sb.toString();
+	}
+
+	public Automobile getAutomobileByIndex(int idx) {
+		int i = 1;
+		for (Automobile am : automobiles.keySet()) {  
+			if (idx == i)
+				return am;
+			
+			i ++;
+        }
+		return null;
+	}
+	
 	// CreateAuto
 
 	public void buildAuto(String fileName) {
@@ -51,11 +83,30 @@ public abstract class ProxyAutomobile {
 			e.fix();
 		}
 	}
-
-	public void printAuto(String modelName) {
-		Automobile automobile = findModel(modelName);
-		if (automobile != null)
-			automobile.print();
+	
+	public void buildAuto(Properties props) {
+		try {
+			String carMake = props.getProperty("CarMake");
+			String carModel = props.getProperty("CarModel");
+			float carBasePrice = Float.valueOf(props.getProperty("CarBasePrice"));
+			Automobile automobile = new Automobile(carMake, carModel, carBasePrice);
+			int i = 1;
+			while(props.containsKey("Option" + i)) {
+				String optionSetName = props.getProperty("Option" + i);
+				automobile.createOptionSet(optionSetName);
+				int j = 1;
+				while (props.containsKey(("OptionValue" + i) + ((char) (j - 1 + 'a')))) {
+					String optionName = props.getProperty(("OptionValue" + i) + ((char) (j - 1 + 'a')));
+					float optionPrice = Float.valueOf(props.getProperty(("OptionPrice" + i) + ((char) (j - 1 + 'a'))));
+					automobile.createOption(optionSetName, optionName, optionPrice);
+					j ++;
+				}
+				i ++;
+			}			
+			automobiles.put(automobile, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// UpdateAuto

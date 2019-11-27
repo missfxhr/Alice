@@ -1,48 +1,70 @@
+
+
 package server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.Properties;
 
-public class BuildCarModelOptions implements AutoServer{
-	private ServerSocket serverSocket;
-	private Socket clientSocket;
-	private PrintWriter out;
-	private BufferedReader in;
+import adapter.*;
 
-	public void start(int port) {
-		try {
-			serverSocket = new ServerSocket(port);
-			clientSocket = serverSocket.accept();
-			ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-            //convert ObjectInputStream object to String
-            String message;
-			message = (String) ois.readObject();
-            System.out.println("Message Received: " + message);
-            //create ObjectOutputStream object
-            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-            //write object to Socket
-            oos.writeObject("Hi Client "+message);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} catch (ClassNotFoundException e2) {
-			e2.printStackTrace();
-		}
+public class BuildCarModelOptions extends ProxyAutomobile {
+
+	////////// PROPERTIES //////////
+
+	private static final int WAITING = 0;
+	private static final int REQUEST_BUILD_AUTO = 1;
+	private static final int REQUEST_CONFIGURE_AUTO = 2;
+
+	private int state = WAITING;
+
+	////////// CONSTRUCTORS //////////
+
+	public BuildCarModelOptions() {
+
 	}
- 
-	public void stop() {
-		try {
-			in.close();
-			out.close();
-			clientSocket.close();
-			serverSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+
+	////////// INSTANCE METHODS //////////
+
+	public Object processRequest(Object obj) {
+		Object toClient = null;
+
+		if (state == REQUEST_BUILD_AUTO) {
+		//add code to buildauto
+			super.buildAuto((Properties) obj);
+			toClient = "Automobile object successfully added to database\n"
+					+ "Press any key to return to main menu";
 		}
+		else if (state == REQUEST_CONFIGURE_AUTO) {
+		//add code for configureauto
+			toClient = super.getAutomobileByIndex((int) obj);
+		}
+		else {
+
+		}
+
+		this.state = WAITING;
+
+		return toClient;
 	}
+
+	public String setRequest(int i) {
+		String output = null;
+
+		if (i == 1) {
+			this.state = REQUEST_BUILD_AUTO;
+			output = "Upload a file to create an Automobile";
+		}
+		else if (i == 2) {
+			this.state = REQUEST_CONFIGURE_AUTO;
+			output = "Select an Automobile from the following list to configure: \n" +
+					super.getAllModels();
+		}
+		else {
+			output = "Invalid request";
+		}
+
+		return output;
+	}
+
+
+
 }

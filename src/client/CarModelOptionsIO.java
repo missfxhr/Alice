@@ -1,33 +1,69 @@
+
 package client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.Socket;
+import java.io.*;
+import java.util.*;
 
 public class CarModelOptionsIO {
-	private ObjectOutputStream oos;
-	private ObjectInputStream ois;
-	private Socket socket;
 
-	public void startConnection(int port) {
-		try {
-			InetAddress host = InetAddress.getLocalHost();
-			socket = new Socket(host.getHostName(), port);
-	        //write to socket using ObjectOutputStream
-	        oos = new ObjectOutputStream(socket.getOutputStream());
-	        //read the server response message
-	        ois = new ObjectInputStream(socket.getInputStream());
-	        String message = (String) ois.readObject();
-	        System.out.println("Message: " + message);
-	        //close resources
-	        ois.close();
-	        oos.close();
-		} catch(IOException e) {
-			e.printStackTrace();
-		} catch(ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	////////// PROPERTIES //////////
+	public static String BASE_PATH = "./resource/";
+
+	////////// CONSTRUCTORS //////////
+
+	public CarModelOptionsIO() {
+
 	}
+
+	////////// INSTANCE METHODS //////////
+
+	public Object loadPropsFile(String fname) {
+		Properties props = new Properties();
+		try {
+			props.load(new FileInputStream(BASE_PATH + fname));
+		}
+		catch (FileNotFoundException e) {
+			System.err.println("Error in file directory ... ");
+			System.exit(1);
+		}
+		catch (IOException e) {
+			System.err.println("Error reading file from directory ... ");
+			System.exit(1);
+		}
+
+		return props;
+	}
+
+	public Object loadTextFile(String fname) {
+		StringBuffer sbuff = new StringBuffer();
+		try {
+			BufferedReader buff = new BufferedReader(new FileReader(fname));
+			boolean eof = false;
+			int counter = 0;
+			while (!eof) {
+				String line = buff.readLine();
+				if (line == null)
+					eof = true;
+				else {
+					if (counter == 0)
+						sbuff.append(line);
+					else
+						sbuff.append("\n" + line);
+				}
+				counter++;
+			}
+			buff.close();
+		}
+		catch (FileNotFoundException e) {
+			System.err.println("Error in file directory ... ");
+			System.exit(1);
+		}
+		catch (IOException e) {
+			System.err.println("Error reading file from directory ... ");
+			System.exit(1);
+		}
+
+		return sbuff;
+	}
+
 }
