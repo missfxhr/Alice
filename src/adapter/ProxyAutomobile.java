@@ -153,6 +153,10 @@ public abstract class ProxyAutomobile {
 		am.print();
 	}
 
+	public void setCurrentAm(String modelName) {
+		this.am = this.findModel(modelName);
+	}
+
 	// One thread releases the lock when this method is called
 	// In another word, one thread can finish as much edit as possible before it wants to release the lock
 	public synchronized void closeEditing() {

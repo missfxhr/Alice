@@ -109,25 +109,46 @@ public class Driver {
 	}
 	
 	// test for assignment 4 - multi-thread editing model
+	// This is sync edit mode
 	// As we can see from the printed results
 	// Each thread takes turn to access the given model, no crossover
 	// Printed information also reflected the content which got edited by that thread
-	public void test4() {
-		testStart(4);
+	public void test4Sync() {
 		String modelName = "Focus Wagon ZTW";
 		CreateAuto ca = new BuildAuto();
 		ca.buildAuto(this.getFileName(modelName));
 
-		EditOption eo1 = new EditOption(modelName, "thread-1");
+		EditOption eo1 = new EditOption(modelName, "thread-1", true);
 		eo1.updateOptionPrice("Transmission", "automatic", 100.0f);
-		EditOption eo2 = new EditOption(modelName, "thread-2");
+		EditOption eo2 = new EditOption(modelName, "thread-2", true);
 		eo2.updateOptionChoice("Transmission", "automatic");
-		EditOption eo3 = new EditOption(modelName, "thread-3");
+		EditOption eo3 = new EditOption(modelName, "thread-3", true);
 		eo3.updateOptionChoice("Color", "Grabber Green Clearcoat Metallic");
 
 		eo1.start();
 		eo2.start();
 		eo3.start();
-		testEnd(4);
+	}
+	
+	// test for assignment 4 - multi-thread editing model
+	// This is async edit mode
+	// As we can see from the printed results
+	// Each thread tries to access the given model with crossovers
+	// Printed information also reflected the content which got edited by that thread
+	public void test4Async() {
+		String modelName = "Focus Wagon ZTW";
+		CreateAuto ca = new BuildAuto();
+		ca.buildAuto(this.getFileName(modelName));
+
+		EditOption eo1 = new EditOption(modelName, "thread-1", false);
+		eo1.updateOptionPrice("Transmission", "automatic", 100.0f);
+		EditOption eo2 = new EditOption(modelName, "thread-2", false);
+		eo2.updateOptionChoice("Transmission", "automatic");
+		EditOption eo3 = new EditOption(modelName, "thread-3", false);
+		eo3.updateOptionChoice("Color", "Grabber Green Clearcoat Metallic");
+
+		eo1.start();
+		eo2.start();
+		eo3.start();
 	}
 }

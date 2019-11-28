@@ -6,6 +6,7 @@ package adapter;
 
 public interface EditAuto {
 	public boolean waitUntilModelIsAvailable(String modelName, String threadID);
+	public void setCurrentAm(String modelName);
 	public void editOptionPrice(String optionSetName, String optionName, float newPrice);
 	public void editChoice(String optionSetName, String optionName);
 	public void printEditedModel(String threadID);

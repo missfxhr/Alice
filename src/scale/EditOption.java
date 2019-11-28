@@ -12,6 +12,7 @@ public class EditOption extends Thread {
 	private String modelName;
 	private String threadID;
 
+	private boolean forceSync;
 	private int pattern;
 	private String optionSetName;
 	private String optionName;
@@ -19,10 +20,11 @@ public class EditOption extends Thread {
 
 	public EditOption() {}
 
-	public EditOption(String modelName, String threadID) {
+	public EditOption(String modelName, String threadID, boolean forceSync) {
 		super(threadID);
 		this.modelName = modelName;
 		this.threadID = threadID;
+		this.forceSync = forceSync;
 	}
 
 	public void updateOptionPrice(String optionSetName, String optionName, float newPrice) {
@@ -40,8 +42,12 @@ public class EditOption extends Thread {
 
 	@Override
 	public void run() {
-		if (!editAuto.waitUntilModelIsAvailable(this.modelName, this.threadID))
-			return;
+		if (forceSync) {
+			if (!editAuto.waitUntilModelIsAvailable(this.modelName, this.threadID))
+				return;
+		} else {
+			editAuto.setCurrentAm(modelName);
+		}
 
 		System.out.println("[" + this.threadID + "] starts working");
 		if (this.pattern == UPDATE_OPTION_CHOICE) {
