@@ -2,9 +2,12 @@
 
 package server;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 import adapter.*;
+import client.DefaultSocketClient;
 
 public class BuildCarModelOptions extends ProxyAutomobile {
 
@@ -13,7 +16,7 @@ public class BuildCarModelOptions extends ProxyAutomobile {
 	private static final int WAITING = 0;
 	private static final int REQUEST_BUILD_AUTO = 1;
 	private static final int REQUEST_CONFIGURE_AUTO = 2;
-
+	
 	private int state = WAITING;
 
 	////////// CONSTRUCTORS //////////
@@ -64,7 +67,5 @@ public class BuildCarModelOptions extends ProxyAutomobile {
 
 		return output;
 	}
-
-
 
 }

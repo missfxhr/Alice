@@ -2,9 +2,11 @@ package driver;
 
 import model.*;
 import scale.EditOption;
+import server.BuildCarModelOptions;
 import server.DefaultServerSocket;
 import util.*;
 
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -144,21 +146,19 @@ public class Driver {
 		CreateAuto ca = new BuildAuto();
 		String model1 = "Focus Wagon ZTW";
 		ca.buildAuto(this.getFileName(model1));
+
+		BuildCarModelOptions bcmo = new BuildCarModelOptions();
+		bcmo.serve(6666);
 		
-		// start server
-		int port = 6666;
-		DefaultServerSocket server = new DefaultServerSocket(port);
-		server.start();
-		InetAddress host;
-		try {
-			// start client
-			host = InetAddress.getLocalHost();
-			DefaultSocketClient client = new DefaultSocketClient(host.getHostName(), port);
-			client.start();
-		} catch (UnknownHostException e) {
-			System.err.println("Unknown host exception caught.");
-			System.exit(1);
-		}
+//		InetAddress host;
+//		try {
+//			// start client
+//			host = InetAddress.getLocalHost();
+//			DefaultSocketClient client = new DefaultSocketClient(host.getHostName(), 6666);
+//			client.start();
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
 		// To play around, you have accord.prop and prius.prop to upload
 		// Together with the pre-loaded model, you will have maximum 3 models to select
 	}

@@ -1,3 +1,5 @@
 package adapter;
 
-public class BuildAuto extends ProxyAutomobile implements CreateAuto, UpdateAuto, FixAuto, EditAuto {}
+import server.AutoServable;
+
+public class BuildAuto extends ProxyAutomobile implements CreateAuto, UpdateAuto, FixAuto, EditAuto, AutoServable {}

@@ -1,13 +1,19 @@
 package adapter;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+
+import client.DefaultSocketClient;
+
 import java.util.Properties;
 import java.util.Set;
 
 import exception.AutoException;
 import model.*;
+import server.DefaultServerSocket;
 import util.FileIO;
 
 public abstract class ProxyAutomobile {
@@ -210,5 +216,11 @@ public abstract class ProxyAutomobile {
 		automobiles.put(am, null);
 		am = null;
 		notifyAll();
+	}
+
+	public void serve(int port) {
+		// start server
+		DefaultServerSocket server = new DefaultServerSocket(port);
+		server.start();
 	}
 }
