@@ -150,15 +150,15 @@ public class Driver {
 		BuildCarModelOptions bcmo = new BuildCarModelOptions();
 		bcmo.serve(6666);
 		
-//		InetAddress host;
-//		try {
-//			// start client
-//			host = InetAddress.getLocalHost();
-//			DefaultSocketClient client = new DefaultSocketClient(host.getHostName(), 6666);
-//			client.start();
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}
+		InetAddress host;
+		try {
+			// start client
+			host = InetAddress.getLocalHost();
+			DefaultSocketClient client = new DefaultSocketClient(host.getHostName(), 6666);
+			client.start();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		// To play around, you have accord.prop and prius.prop to upload
 		// Together with the pre-loaded model, you will have maximum 3 models to select
 	}
